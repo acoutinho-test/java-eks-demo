@@ -30,11 +30,11 @@ pipeline:
                       ls -lah target
               - step:
                   type: BuildAndPushDockerRegistry
-                  name: Build & Push to ECR
+                  name: Build & Push to Docker Hub
                   identifier: docker_build_push
                   spec:
-                    connectorRef: my-ecr-connector     # ECR Connector in Harness
-                    repo: <your_ecr_repo_name>           # e.g., <aws_account_id>.dkr.ecr.<region>.amazonaws.com/java-eks-demo
+                    connectorRef: my-docker-connector     # Docker Connector in Harness
+                    repo: dtemp4559/java-eks-demo           # e.g., <your_dockerhub_username>/java-eks-demo
                     tags:
                       - <+pipeline.sequenceId>
                     dockerfile: Dockerfile
