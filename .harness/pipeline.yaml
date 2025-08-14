@@ -1,8 +1,8 @@
 pipeline:
   name: java-eks-demo
   identifier: javaEksDemo
-  projectIdentifier: my_project
-  orgIdentifier: my_org
+  projectIdentifier: my-app-project
+  orgIdentifier: default
   properties:
     ci:
       codebase:
