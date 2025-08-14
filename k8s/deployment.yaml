@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: demo-app
-          image: <+artifact.image>
-          imagePullPolicy: IfNotPresent
+          image: <+input>
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           readinessProbe:
