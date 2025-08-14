@@ -3,15 +3,9 @@ pipeline:
   identifier: javaEksDemo
   projectIdentifier: myappproject
   orgIdentifier: default
-  properties:
-    ci:
-      codebase:
-        connectorRef: my-github-connector   # Harness Git connector pointing to your GitHub repo
-        repoName: acoutinho-test/java-eks-demo
-        build: <+input>
   stages:
     - stage:
-        name: Build & Push
+        name: Build & Push Docker Image
         identifier: Build_Push
         type: CI
         spec:
@@ -33,8 +27,8 @@ pipeline:
                   name: Build & Push to Docker Hub
                   identifier: docker_build_push
                   spec:
-                    connectorRef: my-docker-connector     # Docker Connector in Harness
-                    repo: dtemp4559/java-eks-demo           # e.g., <your_dockerhub_username>/java-eks-demo
+                    connectorRef: my-docker-connector       # Docker Hub connector in Harness
+                    repo: dtemp4559/java-eks-demo
                     tags:
                       - <+pipeline.sequenceId>
                     dockerfile: Dockerfile
@@ -45,7 +39,6 @@ pipeline:
         type: Deployment
         spec:
           serviceConfig:
-            serviceRef: demo_app_service
             serviceDefinition:
               type: Kubernetes
               spec:
@@ -71,12 +64,12 @@ pipeline:
             name: eks-env
             identifier: eks_env
             type: PreProduction
-            tags: {}
             infrastructureDefinitions:
               - identifier: eks_infra
+                name: eks_infra
                 type: KubernetesDirect
                 spec:
-                  connectorRef: my-eks-connector     # Kubernetes connector pointing to your EKS cluster
+                  connectorRef: my-eks-connector
                   namespace: default
                   releaseName: demo-app
           execution:
