@@ -11,7 +11,7 @@ public class DemoApplication {
 
     @GetMapping("/")
     public String hello() {
-        return "Hello from Harness CI/CD on AWS EKS!";
+        return "Hello Ashley from Harness CI/CD on AWS EKS!";
     }
 
     public static void main(String[] args) {
