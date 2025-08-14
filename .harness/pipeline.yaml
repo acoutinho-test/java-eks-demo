@@ -1,0 +1,89 @@
+pipeline:
+  name: java-eks-demo
+  identifier: javaEksDemo
+  projectIdentifier: my_project
+  orgIdentifier: my_org
+  properties:
+    ci:
+      codebase:
+        connectorRef: github_public_repo   # Harness Git connector pointing to your GitHub repo
+        repoName: <your_github_user>/java-eks-demo
+        build: <+input>
+  stages:
+    - stage:
+        name: Build & Push
+        identifier: Build_Push
+        type: CI
+        spec:
+          cloneCodebase: true
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Maven Build
+                  identifier: maven_build
+                  spec:
+                    image: maven:3.9.4-eclipse-temurin-17
+                    shell: Bash
+                    command: |
+                      mvn -q -DskipTests clean package
+                      ls -lah target
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Build & Push to ECR
+                  identifier: docker_build_push
+                  spec:
+                    connectorRef: aws_ecr_connector     # ECR Connector in Harness
+                    repo: <your_ecr_repo_name>           # e.g., <aws_account_id>.dkr.ecr.<region>.amazonaws.com/java-eks-demo
+                    tags:
+                      - <+pipeline.sequenceId>
+                    dockerfile: Dockerfile
+                    context: .
+    - stage:
+        name: Deploy to EKS
+        identifier: Deploy_EKS
+        type: Deployment
+        spec:
+          serviceConfig:
+            serviceRef: null
+            serviceDefinition:
+              type: Kubernetes
+              spec:
+                manifests:
+                  - manifest:
+                      identifier: k8sManifests
+                      type: K8sManifest
+                      spec:
+                        store:
+                          type: Git
+                          spec:
+                            connectorRef: github_public_repo
+                            repoName: <your_github_user>/java-eks-demo
+                            gitFetchType: Branch
+                            branch: main
+                            paths:
+                              - k8s/deployment.yaml
+                artifacts:
+                  primary:
+                    useFromStage:
+                      stage: Build_Push
+          environment:
+            name: eks-env
+            identifier: eks_env
+            type: PreProduction
+            tags: {}
+            infrastructureDefinitions:
+              - identifier: eks_infra
+                type: KubernetesDirect
+                spec:
+                  connectorRef: aws_eks_connector     # Kubernetes connector pointing to your EKS cluster
+                  namespace: default
+                  releaseName: demo-app
+          execution:
+            steps:
+              - step:
+                  type: K8sRollingDeploy
+                  name: Rolling Deploy
+                  identifier: rolling_deploy
+                  spec:
+                    skipDryRun: false
