@@ -6,8 +6,8 @@ pipeline:
   properties:
     ci:
       codebase:
-        connectorRef: github_public_repo   # Harness Git connector pointing to your GitHub repo
-        repoName: <your_github_user>/java-eks-demo
+        connectorRef: my-github-connector   # Harness Git connector pointing to your GitHub repo
+        repoName: acoutinho-test/java-eks-demo
         build: <+input>
   stages:
     - stage:
@@ -33,7 +33,7 @@ pipeline:
                   name: Build & Push to ECR
                   identifier: docker_build_push
                   spec:
-                    connectorRef: aws_ecr_connector     # ECR Connector in Harness
+                    connectorRef: my-ecr-connector     # ECR Connector in Harness
                     repo: <your_ecr_repo_name>           # e.g., <aws_account_id>.dkr.ecr.<region>.amazonaws.com/java-eks-demo
                     tags:
                       - <+pipeline.sequenceId>
@@ -57,8 +57,8 @@ pipeline:
                         store:
                           type: Git
                           spec:
-                            connectorRef: github_public_repo
-                            repoName: <your_github_user>/java-eks-demo
+                            connectorRef: my-github-connector
+                            repoName: acoutinho-test/java-eks-demo
                             gitFetchType: Branch
                             branch: main
                             paths:
@@ -76,7 +76,7 @@ pipeline:
               - identifier: eks_infra
                 type: KubernetesDirect
                 spec:
-                  connectorRef: aws_eks_connector     # Kubernetes connector pointing to your EKS cluster
+                  connectorRef: my-eks-connector     # Kubernetes connector pointing to your EKS cluster
                   namespace: default
                   releaseName: demo-app
           execution:
