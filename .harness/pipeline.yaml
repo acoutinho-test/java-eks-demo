@@ -45,7 +45,7 @@ pipeline:
         type: Deployment
         spec:
           serviceConfig:
-            serviceRef: null
+            serviceRef: demo_app_service
             serviceDefinition:
               type: Kubernetes
               spec:
