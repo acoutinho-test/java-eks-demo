@@ -13,7 +13,7 @@ This repo contains a minimal Spring Boot app, Dockerfile, Kubernetes manifests, 
 ├── pom.xml
 ├── Dockerfile
 ├── k8s/deployment.yaml
-└── .harness/pipeline.yaml
+└── .harness/pipeline.yaml (Ashley: removed. Created pipeline myself in harness)
 ```
 
 ## Prereqs
@@ -21,7 +21,7 @@ This repo contains a minimal Spring Boot app, Dockerfile, Kubernetes manifests, 
 - **EKS cluster** reachable by Harness
 - **Harness connectors**
   - `github_public_repo` → points to this GitHub repo (type: Git)
-  - `aws_ecr_connector` → Docker Registry connector to your ECR registry
+  - `aws_ecr_connector` → Docker Registry connector to your ECR registry (Ashley: I used dockerhub registry)
   - `aws_eks_connector` → Kubernetes connector to the EKS cluster (service account or IAM auth)
 
 ## Quick Start (Harness)
